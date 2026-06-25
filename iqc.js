@@ -6,8 +6,16 @@ import { fileURLToPath } from 'node:url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-const BG_URL   = "https://raw.githubusercontent.com/ryyntwx/allimagerin/refs/heads/main/Iqcbyrin.png";
-const BG_LOCAL = '/tmp/Iqcbyrin.png';
+const BG_URLS = {
+    pink:  "https://raw.githubusercontent.com/ryyntwx/allimagerin/refs/heads/main/Iqcbyrin.png",
+    light: "https://raw.githubusercontent.com/lutfizx0-design/background/e694c2dd58261ebbdd9b4102ae1e243f8719eae9/file_0000000073bc7208bc4e711df5b6eb30.png",
+    dark:  "https://raw.githubusercontent.com/lutfizx0-design/background/e694c2dd58261ebbdd9b4102ae1e243f8719eae9/file_0000000082b47208af068ebb1f0526a2.png",
+};
+const BG_LOCALS = {
+    pink:  '/tmp/Iqcbyrin.png',
+    light: '/tmp/bg_light.png',
+    dark:  '/tmp/bg_dark.png',
+};
 
 const INTER_FONTS = [
     { url: 'https://fonts.gstatic.com/s/inter/v18/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuLyfAZ9hiJ-Ek-_EeA.woff2', file: 'Inter-Regular.ttf' },
@@ -109,11 +117,14 @@ async function ensureAssets() {
 
     await loadAppleEmojiMap();
 
-    if (!existsSync(BG_LOCAL)) {
-        console.log('Downloading background...');
-        const buf = await downloadFile(BG_URL);
-        await writeFile(BG_LOCAL, buf);
-        console.log(`Background saved: ${BG_LOCAL}`);
+    for (const [key, url] of Object.entries(BG_URLS)) {
+        const localPath = BG_LOCALS[key];
+        if (!existsSync(localPath)) {
+            console.log(`Downloading background: ${key}...`);
+            const buf = await downloadFile(url);
+            await writeFile(localPath, buf);
+            console.log(`Background saved: ${localPath}`);
+        }
     }
 }
 
@@ -206,14 +217,10 @@ async function render(text, time, outputPath, options = {}) {
     const ctx    = canvas.getContext('2d');
 
     // Gambar background
-    const bgImg = await loadImage(BG_LOCAL);
+    const bgKey = s.background === 'dark' ? 'dark' : s.background === 'light' ? 'light' : 'pink';
+    const bgLocalPath = BG_LOCALS[bgKey];
+    const bgImg = await loadImage(bgLocalPath);
     ctx.drawImage(bgImg, 0, 0, BG_W, BG_H);
-
-    // Jika background dark, tambahkan lapisan gelap
-    if (s.background === 'dark') {
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.55)';
-        ctx.fillRect(0, 0, BG_W, BG_H);
-    }
 
     const rightPadding   = Math.round(80  * SX);
     const textPaddingX   = Math.round(36  * SX);
