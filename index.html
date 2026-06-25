@@ -817,7 +817,7 @@
                     // ===== STYLE 2: LOCAL =====
                     const bg = bgSelect.value;
                     // pink = bubble pink, light/dark = bubble hijau WA
-                    const bubbleColor = bg === 'pink' ? '#ffc5d5' : '#dcf8c6';
+                    const bubbleColor = bg === 'pink' ? '#ffc5d5' : bg === 'dark' ? '#144D37' : '#dcf8c6';
                     const response = await fetch('/generate-style2', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
