@@ -7,7 +7,7 @@ import { fileURLToPath } from 'node:url';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const BG_URL   = "https://raw.githubusercontent.com/ryyntwx/allimagerin/refs/heads/main/Iqcbyrin.png";
-const BG_LOCAL = join(__dirname, 'Iqcbyrin.png');
+const BG_LOCAL = '/tmp/Iqcbyrin.png';
 
 const INTER_FONTS = [
     { url: 'https://fonts.gstatic.com/s/inter/v18/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuLyfAZ9hiJ-Ek-_EeA.woff2', file: 'Inter-Regular.ttf' },
@@ -16,7 +16,7 @@ const INTER_FONTS = [
 ];
 
 const APPLE_EMOJI_JSON_URL   = 'https://media.githubusercontent.com/media/Ditzzx-vibecoder/entahlah/main/emoji-apple.json';
-const APPLE_EMOJI_JSON_LOCAL = join(__dirname, 'fonts', 'emoji-apple-image.json');
+const APPLE_EMOJI_JSON_LOCAL = '/tmp/emoji-apple-image.json';
 
 const BG_W = 906;
 const BG_H = 1736;
@@ -95,10 +95,10 @@ async function drawAppleEmoji(ctx, emoji, x, y, size) {
 }
 
 async function ensureAssets() {
-    await mkdir(join(__dirname, 'fonts'), { recursive: true });
+    await mkdir('/tmp/fonts', { recursive: true });
 
     for (const f of INTER_FONTS) {
-        const dest = join(__dirname, 'fonts', f.file);
+        const dest = '/tmp/fonts/' + f.file;
         if (!existsSync(dest)) {
             console.log(`Downloading font: ${f.file}`);
             const buf = await downloadFile(f.url);
@@ -401,7 +401,7 @@ async function render(text, time, outputPath, options = {}) {
     ctx.restore();
 
     const pngData = await canvas.encode('png');
-    const out = outputPath ?? join(__dirname, `iPhone_Chat_Quote_${Date.now()}.png`);
+    const out = outputPath ?? join('/tmp', `iPhone_Chat_Quote_${Date.now()}.png`);
     await writeFile(out, pngData);
     console.log(`Saved: ${out}`);
     return out;
