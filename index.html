@@ -649,49 +649,27 @@
                     <input type="text" id="text" class="message-input" placeholder="Ketik pesan disini...">
                 </div>
                 
-                <!-- Baris 2: Select Style + Warna Bubble -->
-                <div class="row-group" style="display:flex !important; flex-direction:row !important; gap:10px;">
-                    <div class="input-group">
-                        <div class="input-label">
+                <!-- Baris 2: Select Style -->
+                <div class="input-group">
+                    <div class="input-label">
                         STYLE
-                        </div>
-                        <div class="custom-select-wrapper">
-                            <select class="custom-select" id="styleSelect">
-                                <option value="style1">Style 1</option>
-                                <option value="style2">Style 2</option>
-                            </select>
-                        </div>
                     </div>
-                    
-                    <div class="input-group">
-                        <div class="input-label">
-                        WARNA BUBBLE
-                        </div>
-                        <div class="custom-select-wrapper" id="colorWrapper">
-                            <select class="custom-select" id="colorSelect" disabled>
-                                <option value="#dcf8c6">Hijau WA</option>
-                                <option value="#ffc5d5">Pink</option>
-                                <option value="#ffb3ba">Biru Muda</option>
-                                <option value="#bae1ff">Kuning</option>
-                                <option value="#baffc9">Hijau Mint</option>
-                                <option value="#ffffba">Ungu</option>
-                                <option value="#e8d0ff">Peach</option>
-                                <option value="#ffd4a8">Abu-abu</option>
-                                <option value="#d3d3d3">Putih</option>
-                                <option value="#f8f8f8">Biru Langit</option>
-                                <option value="#a8d8ea">Merah Muda</option>
-                            </select>
-                        </div>
+                    <div class="custom-select-wrapper">
+                        <select class="custom-select" id="styleSelect">
+                            <option value="style1">Style 1</option>
+                            <option value="style2">Style 2</option>
+                        </select>
                     </div>
                 </div>
-                
-                <!-- Baris 3: Select Background (full width) -->
-                <div class="input-group">
+
+                <!-- Baris 3: Select Background -->
+                <div class="input-group" id="bgGroup" style="display:none;">
                     <div class="input-label">
                         BACKGROUND
                     </div>
-                    <div class="custom-select-wrapper" id="bgWrapper">
-                        <select class="custom-select" id="bgSelect" disabled>
+                    <div class="custom-select-wrapper">
+                        <select class="custom-select" id="bgSelect">
+                            <option value="pink">Pink</option>
                             <option value="light">Light</option>
                             <option value="dark">Dark</option>
                         </select>
@@ -774,29 +752,18 @@
         const textInput = document.getElementById('text');
         const timeInput = document.getElementById('time');
         const styleSelect = document.getElementById('styleSelect');
-        const colorSelect = document.getElementById('colorSelect');
         const bgSelect = document.getElementById('bgSelect');
-        const colorWrapper = document.getElementById('colorWrapper');
-        const bgWrapper = document.getElementById('bgWrapper');
+        const bgGroup = document.getElementById('bgGroup');
         const errorMessage = document.getElementById('errorMessage');
         const errorText = document.getElementById('errorText');
         const notification = document.getElementById('notification');
 
-        // Hapus semua referensi styleInfo (tidak ada di HTML)
-
         let currentImageUrl = '';
 
-        // Toggle enable/disable berdasarkan style
-        function toggleStyleOptions() {
-            const isStyle2 = styleSelect.value === 'style2';
-            colorSelect.disabled = !isStyle2;
-            bgSelect.disabled = !isStyle2;
-            colorWrapper.classList.toggle('disabled', !isStyle2);
-            bgWrapper.classList.toggle('disabled', !isStyle2);
-        }
-
-        styleSelect.addEventListener('change', toggleStyleOptions);
-        toggleStyleOptions(); // set initial
+        // Tampilkan/sembunyikan background select
+        styleSelect.addEventListener('change', function() {
+            bgGroup.style.display = this.value === 'style2' ? 'block' : 'none';
+        });
 
         // Show notification
         function showNotification() {
@@ -848,8 +815,9 @@
 
                 } else {
                     // ===== STYLE 2: LOCAL =====
-                    const bubbleColor = colorSelect.value;
-                    const background = bgSelect.value;
+                    const bg = bgSelect.value;
+                    // pink = bubble pink, light/dark = bubble hijau WA
+                    const bubbleColor = bg === 'pink' ? '#ffc5d5' : '#dcf8c6';
                     const response = await fetch('/generate-style2', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
@@ -857,7 +825,7 @@
                             text,
                             time,
                             bubbleColor,
-                            background
+                            background: bg
                         })
                     });
                     if (!response.ok) {
