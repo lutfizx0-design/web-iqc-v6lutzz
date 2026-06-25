@@ -798,11 +798,11 @@
             
             // Update info text
             if (isStyle2) {
-                styleInfo.textContent = 'Style 2 (Local) mendukung warna bubble & background';
-                styleInfo.style.color = '#4caf50';
-            } else {
-                styleInfo.textContent = 'Style 1 (API) tidak mendukung warna bubble & background';
-                styleInfo.style.color = '#666';
+    styleInfo.textContent = 'Style 2 (Local) mendukung warna bubble & background';
+    styleInfo.style.color = '#4caf50';
+} else {
+    styleInfo.textContent = 'Style 1 (API) tidak mendukung warna bubble & background';
+    styleInfo.style.color = '#666';
             }
         }
         
@@ -879,7 +879,7 @@
                     const bubbleColor = colorSelect.value;
                     const background = bgSelect.value;
                     
-                    const response = await fetch('http://localhost:3000/generate-style2', {
+                    const response = await fetch('/generate-style2', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
