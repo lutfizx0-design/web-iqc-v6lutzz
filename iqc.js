@@ -211,9 +211,10 @@ async function render(text, time, outputPath, options = {}) {
     time: time ?? state.time,
     bubbleColor: options.bubbleColor || state.bubbleColor,
     background: options.background || 'light',
-    textColor: options.background === 'dark' ? '#ffffff' : '#111111'
+    textColor: options.background === 'dark' ? '#ffffff' : '#111111',
+    timeColor: options.background === 'dark' ? '#aaaaaa' : '#5e4146',
+    tickColor: options.background === 'dark' ? '#4fc3f7' : '#8c1d2c'
 };
-
     const canvas = createCanvas(BG_W, BG_H);
     const ctx    = canvas.getContext('2d');
 
