@@ -379,7 +379,7 @@ async function render(text, time, outputPath, options = {}) {
         ctx.shadowColor   = "rgba(0,0,0,0.10)";
         ctx.shadowBlur    = 36;
         ctx.shadowOffsetY = 16;
-        ctx.fillStyle = s.background === 'dark' ? '#222629' : '#FFFFFF';
+        ctx.fillStyle = s.background === 'dark' ? '#888888' : '#E5E5EA';
         drawRoundedRect(ctx, rxX, rxY, rxWidth, rxHeight, rxRadius);
         ctx.fill();
         ctx.restore();
@@ -397,7 +397,7 @@ async function render(text, time, outputPath, options = {}) {
         ctx.arc(plusX, plusY, plusR, 0, Math.PI * 2);
         ctx.fillStyle = "#E5E5EA";
         ctx.fill();
-        ctx.strokeStyle = "#8E8E93";
+        ctx.strokeStyle = s.background === 'dark' ? '#22272A' : '#8E8E93';
         ctx.lineWidth   = 4.5 * SX;
         ctx.lineCap     = "round";
         ctx.beginPath();
