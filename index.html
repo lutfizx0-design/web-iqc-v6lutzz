@@ -6,6 +6,7 @@
     <title>IQC STUDIO - Mobile Build</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        /* --- CSS SAMA PERSIS SEPERTI YANG ANDA KIRIM --- */
         * {
             margin: 0;
             padding: 0;
@@ -762,6 +763,7 @@
     </div>
     
     <script>
+        // ===== PERBAIKAN HANYA DI BAGIAN INI =====
         // DOM Elements
         const generateBtn = document.getElementById('generateBtn');
         const loadingOverlay = document.getElementById('loadingOverlay');
@@ -779,151 +781,109 @@
         const errorMessage = document.getElementById('errorMessage');
         const errorText = document.getElementById('errorText');
         const notification = document.getElementById('notification');
-        const styleInfo = document.getElementById('styleInfo');
-        
-        // Variables
+
+        // Hapus semua referensi styleInfo (tidak ada di HTML)
+
         let currentImageUrl = '';
-        
+
         // Toggle enable/disable berdasarkan style
         function toggleStyleOptions() {
             const isStyle2 = styleSelect.value === 'style2';
-            
-            // Enable/disable select
             colorSelect.disabled = !isStyle2;
             bgSelect.disabled = !isStyle2;
-            
-            // Tambah/remove class disabled pada wrapper (untuk icon)
             colorWrapper.classList.toggle('disabled', !isStyle2);
             bgWrapper.classList.toggle('disabled', !isStyle2);
-            
-            // Update info text
-            if (isStyle2) {
-    styleInfo.textContent = 'Style 2 (Local) mendukung warna bubble & background';
-    styleInfo.style.color = '#4caf50';
-} else {
-    styleInfo.textContent = 'Style 1 (API) tidak mendukung warna bubble & background';
-    styleInfo.style.color = '#666';
-            }
         }
-        
+
         styleSelect.addEventListener('change', toggleStyleOptions);
-        // Trigger awal
-        toggleStyleOptions();
-        
+        toggleStyleOptions(); // set initial
+
         // Show notification
         function showNotification() {
             notification.classList.add('show');
-            setTimeout(() => {
-                notification.classList.remove('show');
-            }, 5000);
+            setTimeout(() => notification.classList.remove('show'), 5000);
         }
-        
-        // Show error message
+
+        // Show error
         function showError(message) {
             errorText.textContent = message;
             errorMessage.classList.add('active');
-            
-            setTimeout(() => {
-                errorMessage.classList.remove('active');
-            }, 5000);
+            setTimeout(() => errorMessage.classList.remove('active'), 5000);
         }
-        
-        // Generate image
+
+        // Generate
         generateBtn.addEventListener('click', async function() {
             const text = textInput.value.trim();
             const time = timeInput.value.trim() || '22.54';
             const style = styleSelect.value;
-            
+
             if (!text) {
                 showError('Harap isi pesan chat terlebih dahulu.');
                 return;
             }
-            
+
             loadingOverlay.classList.add('active');
             errorMessage.classList.remove('active');
-            
+
             try {
                 let imageBlob = null;
-                
+
                 if (style === 'style1') {
                     // ===== STYLE 1: API =====
                     const apiUrl = `https://api-faa.my.id/faa/iqc?prompt=${encodeURIComponent(text)}`;
-                    
                     const controller = new AbortController();
                     const timeoutId = setTimeout(() => controller.abort(), 30000);
-                    
                     const response = await fetch(apiUrl, {
                         signal: controller.signal,
                         mode: 'cors'
                     });
-                    
                     clearTimeout(timeoutId);
-                    
-                    if (!response.ok) {
-                        throw new Error(`API error: ${response.status}`);
-                    }
-                    
+                    if (!response.ok) throw new Error(`API error: ${response.status}`);
                     const contentType = response.headers.get('content-type');
                     if (!contentType || !contentType.includes('image')) {
                         throw new Error('API tidak mengembalikan gambar');
                     }
-                    
                     imageBlob = await response.blob();
-                    
-                    if (imageBlob.size === 0) {
-                        throw new Error('Gambar kosong');
-                    }
-                    
+                    if (imageBlob.size === 0) throw new Error('Gambar kosong');
+
                 } else {
                     // ===== STYLE 2: LOCAL =====
                     const bubbleColor = colorSelect.value;
                     const background = bgSelect.value;
-                    
                     const response = await fetch('/generate-style2', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
-                            text: text,
-                            time: time,
-                            bubbleColor: bubbleColor,
-                            background: background
+                            text,
+                            time,
+                            bubbleColor,
+                            background
                         })
                     });
-                    
                     if (!response.ok) {
                         const errorData = await response.json().catch(() => ({}));
                         throw new Error(errorData.error || `Server error: ${response.status}`);
                     }
-                    
                     imageBlob = await response.blob();
-                    
-                    if (imageBlob.size === 0) {
-                        throw new Error('Gambar kosong');
-                    }
+                    if (imageBlob.size === 0) throw new Error('Gambar kosong');
                 }
-                
-                // Tampilkan gambar
-                if (currentImageUrl) {
-                    URL.revokeObjectURL(currentImageUrl);
-                }
+
+                if (currentImageUrl) URL.revokeObjectURL(currentImageUrl);
                 currentImageUrl = URL.createObjectURL(imageBlob);
                 generatedImage.src = currentImageUrl;
-                
                 await new Promise((resolve, reject) => {
                     generatedImage.onload = resolve;
                     generatedImage.onerror = () => reject(new Error('Gagal memuat gambar'));
                 });
-                
+
                 loadingOverlay.classList.remove('active');
                 resultSection.classList.add('active');
                 showNotification();
-                
                 resultSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                
+
             } catch (error) {
                 console.error('Error:', error);
                 loadingOverlay.classList.remove('active');
-                
                 if (error.name === 'AbortError') {
                     showError('Waktu permintaan habis. Coba lagi.');
                 } else if (error.message.includes('ECONNREFUSED') || error.message.includes('localhost')) {
@@ -933,14 +893,13 @@
                 }
             }
         });
-        
-        // Download image
+
+        // Download
         downloadBtn.addEventListener('click', function() {
             if (!currentImageUrl) {
                 showError('Tidak ada gambar');
                 return;
             }
-            
             const link = document.createElement('a');
             link.href = currentImageUrl;
             const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
@@ -949,21 +908,21 @@
             link.click();
             document.body.removeChild(link);
         });
-        
+
         // Buat baru
         newBtn.addEventListener('click', function() {
             resultSection.classList.remove('active');
             window.scrollTo(0, 0);
         });
-        
+
         // Enter key
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' && !loadingOverlay.classList.contains('active')) {
                 generateBtn.click();
             }
         });
-        
-        // Load selesai
+
+        // Load
         window.addEventListener('load', function() {
             window.scrollTo(0, 0);
         });
