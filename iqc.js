@@ -379,7 +379,7 @@ async function render(text, time, outputPath, options = {}) {
         ctx.shadowColor   = "rgba(0,0,0,0.10)";
         ctx.shadowBlur    = 36;
         ctx.shadowOffsetY = 16;
-        ctx.fillStyle = s.background === 'dark' ? '#1a1a1a' : '#FFFFFF';
+        ctx.fillStyle = s.background === 'dark' ? '#222629' : '#FFFFFF';
         drawRoundedRect(ctx, rxX, rxY, rxWidth, rxHeight, rxRadius);
         ctx.fill();
         ctx.restore();
