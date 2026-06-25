@@ -206,12 +206,13 @@ async function render(text, time, outputPath, options = {}) {
     await ensureAssets();
 
     const s = { 
-        ...state, 
-        text: text ?? state.text, 
-        time: time ?? state.time,
-        bubbleColor: options.bubbleColor || state.bubbleColor,
-        background: options.background || 'light'
-    };
+    ...state, 
+    text: text ?? state.text, 
+    time: time ?? state.time,
+    bubbleColor: options.bubbleColor || state.bubbleColor,
+    background: options.background || 'light',
+    textColor: options.background === 'dark' ? '#ffffff' : '#111111'
+};
 
     const canvas = createCanvas(BG_W, BG_H);
     const ctx    = canvas.getContext('2d');
