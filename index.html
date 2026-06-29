@@ -797,7 +797,7 @@
 
                 if (style === 'style1') {
                     // ===== STYLE 1: API =====
-                    const apiUrl = `https://api-faa.my.id/faa/iqc?prompt=${encodeURIComponent(text)}`;
+                    const apiUrl = `https://api.theresav.biz.id/canvas/iqc?teks=${encodeURIComponent(text)}`;
                     const controller = new AbortController();
                     const timeoutId = setTimeout(() => controller.abort(), 30000);
                     const response = await fetch(apiUrl, {
